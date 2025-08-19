@@ -25,11 +25,12 @@ export interface Solicitacao {
   cep: string;
   bairro: string;
   cidade: string;
-  localizacao: firestore.GeoPoint;
+  latitude: string;
+  longitude: string;
   descricao_demanda?: string;
   nome_solicitante: string;
   telefone_solicitante: string;
-  data_criacao?: firestore.Timestamp;
+  data_criacao?: string; // Alterado para string para simplificar
 }
 
 export interface Rota {

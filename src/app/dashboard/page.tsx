@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth } from '../../lib/firebase';
 import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import AdministracaoPage from './AdministracaoPage'; // Importe a nova página
-
+import SolicitacoesPage from './SolicitacoesPage';
 // --- Ícones ---
 const LogoIconDashboard = ({ className }: { className: string }) => (
   <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M50,10 A40,40 0 0,1 90,50 A40,40 0 0,1 50,90 A40,40 0 0,1 10,50 A40,40 0 0,1 50,10 Z M50,20 A30,30 0 0,0 20,50 A30,30 0 0,0 50,80 A30,30 0 0,0 80,50 A30,30 0 0,0 50,20 Z" /><path d="M50 35 L50 65 M35 50 L65 50" stroke="white" strokeWidth="5" /><circle cx="50" cy="50" r="5" fill="white" /></svg>
@@ -53,12 +53,15 @@ const DashboardLayout = ({ user, onSignOut }: { user: User, onSignOut: () => voi
     switch (activePage) {
       case 'Administração':
         return <AdministracaoPage />;
+      case 'Solicitações': // Adicione este caso
+        return <SolicitacoesPage />;
       case 'Dashboard':
         return <DashboardContent />;
+      // Adicione outros casos para outras páginas aqui
       default:
         return <div className="bg-white/80 p-6 rounded-lg shadow-md">Conteúdo para <strong>{activePage}</strong> em desenvolvimento.</div>;
     }
-  };
+};
 
   return (
     <div className="bg-[#F0F5E4] min-h-screen font-sans">
