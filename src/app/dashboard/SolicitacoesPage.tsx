@@ -159,12 +159,14 @@ const SolicitacaoForm = ({ solicitacao, tiposDemanda, tiposAndamento, onSave, on
 };
 
 // --- Componente Card de Solicitação ---
-const SolicitacaoCard = ({ solicitacao, tiposDemanda, tiposAndamento, onSelect, isSelected }: {
+const SolicitacaoCard = ({ solicitacao, tiposDemanda, tiposAndamento, onSelect, isSelected, onEdit, onDelete }: {
     solicitacao: Solicitacao;
     tiposDemanda: TipoDemanda[];
     tiposAndamento: TipoAndamento[];
     onSelect: (id: string, isCtrlKey: boolean) => void;
     isSelected: boolean;
+    onEdit: (solicitacao: Solicitacao) => void;
+    onDelete: (id: string) => void;
 }) => {
     const demanda = tiposDemanda.find(d => d.id === solicitacao.tipo_demanda_id);
     const andamento = tiposAndamento.find(a => a.id === solicitacao.tipo_andamento_id);
@@ -179,13 +181,20 @@ const SolicitacaoCard = ({ solicitacao, tiposDemanda, tiposAndamento, onSelect, 
                 <div className="flex justify-between items-start">
                     <div>
                         <p className="text-sm text-gray-500">{solicitacao.numero_processo || 'Sem processo'}</p>
-                        <p className="font-bold text-lg text-gray-800">{demanda?.nome || 'Demanda não encontrada'}</p>
+                        <p className="text-xs text-gray-600">Tipo de Demanda:</p>
+                        <p className="font-bold text-lg text-gray-800 -mt-1">{demanda?.nome || 'Não encontrada'}</p>
                     </div>
-                    {andamento && (
-                        <span className="text-xs font-bold text-white px-3 py-1 rounded-full shadow-sm" style={{ backgroundColor: andamento.cor }}>
-                            {andamento.nome}
-                        </span>
-                    )}
+                    <div className="flex items-center">
+                        {andamento && (
+                            <span className="text-xs font-bold text-white px-3 py-1 rounded-full shadow-sm" style={{ backgroundColor: andamento.cor }}>
+                                {andamento.nome}
+                            </span>
+                        )}
+                        <div className="flex-shrink-0 ml-2">
+                             <button onClick={(e) => { e.stopPropagation(); onEdit(solicitacao); }} className="text-blue-500 hover:text-blue-700 p-2"><EditIcon className="w-5 h-5"/></button>
+                             <button onClick={(e) => { e.stopPropagation(); onDelete(solicitacao.id!); }} className="text-red-500 hover:text-red-700 p-2"><DeleteIcon className="w-5 h-5"/></button>
+                        </div>
+                    </div>
                 </div>
                 <p className="text-gray-700 mt-2">{solicitacao.logradouro}, {solicitacao.numero} - {solicitacao.bairro}</p>
                 <p className="text-sm text-gray-600">{solicitacao.cidade}</p>
@@ -226,9 +235,28 @@ export default function SolicitacoesPage() {
                 fetch('/api/tiposDemanda'),
                 fetch('/api/tiposAndamento')
             ]);
-            setSolicitacoes(await solicitacoesRes.json());
-            setTiposDemanda(await demandasRes.json());
-            setTiposAndamento(await andamentosRes.json());
+
+            if (solicitacoesRes.ok) {
+                setSolicitacoes(await solicitacoesRes.json());
+            } else {
+                console.error("Falha ao buscar solicitações:", await solicitacoesRes.json());
+                setSolicitacoes([]); // Garante que o estado seja um array em caso de erro
+            }
+
+            if (demandasRes.ok) {
+                setTiposDemanda(await demandasRes.json());
+            } else {
+                 console.error("Falha ao buscar tipos de demanda:", await demandasRes.json());
+                 setTiposDemanda([]);
+            }
+
+            if(andamentosRes.ok) {
+                setTiposAndamento(await andamentosRes.json());
+            } else {
+                console.error("Falha ao buscar tipos de andamento:", await andamentosRes.json());
+                setTiposAndamento([]);
+            }
+
         } catch (error) {
             console.error("Falha ao carregar dados:", error);
         } finally {
@@ -242,6 +270,9 @@ export default function SolicitacoesPage() {
 
     // Lógica de filtragem
     const filteredSolicitacoes = useMemo(() => {
+        if (!Array.isArray(solicitacoes)) {
+            return []; // Retorna um array vazio se o estado não for um array
+        }
         return solicitacoes.filter(s => 
             (filters.rua ? s.logradouro.toLowerCase().includes(filters.rua.toLowerCase()) : true) &&
             (filters.bairro ? s.bairro.toLowerCase().includes(filters.bairro.toLowerCase()) : true) &&
@@ -265,6 +296,28 @@ export default function SolicitacoesPage() {
         } else {
             const data = await response.json();
             alert(`Erro: ${data.error || 'Não foi possível salvar a solicitação.'}`);
+        }
+    };
+
+    const handleEdit = (solicitacao: Solicitacao) => {
+        setEditingSolicitacao(solicitacao);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (id: string) => {
+        if (window.confirm("Tem certeza que deseja apagar esta solicitação?")) {
+            const response = await fetch('/api/solicitacoes', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+
+            if (response.ok) {
+                fetchData();
+            } else {
+                const data = await response.json();
+                alert(`Erro: ${data.error || 'Não foi possível apagar a solicitação.'}`);
+            }
         }
     };
     
@@ -316,13 +369,13 @@ export default function SolicitacoesPage() {
 
             {/* Filtros */}
             <div className="mb-6 p-4 bg-white/80 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-               <input type="text" placeholder="Filtrar por rua..." value={filters.rua} onChange={e => setFilters({...filters, rua: e.target.value})} className="p-2 border rounded-md"/>
-               <input type="text" placeholder="Filtrar por bairro..." value={filters.bairro} onChange={e => setFilters({...filters, bairro: e.target.value})} className="p-2 border rounded-md"/>
-               <select value={filters.tipo_demanda_id} onChange={e => setFilters({...filters, tipo_demanda_id: e.target.value})} className="p-2 border rounded-md bg-white">
+               <input type="text" placeholder="Filtrar por rua..." value={filters.rua} onChange={e => setFilters({...filters, rua: e.target.value})} className="p-2 border rounded-md text-gray-800"/>
+               <input type="text" placeholder="Filtrar por bairro..." value={filters.bairro} onChange={e => setFilters({...filters, bairro: e.target.value})} className="p-2 border rounded-md text-gray-800"/>
+               <select value={filters.tipo_demanda_id} onChange={e => setFilters({...filters, tipo_demanda_id: e.target.value})} className="p-2 border rounded-md bg-white text-gray-800">
                   <option value="">Todos os Tipos de Demanda</option>
                   {tiposDemanda.map(td => <option key={td.id} value={td.id}>{td.nome}</option>)}
                </select>
-               <select value={filters.tipo_andamento_id} onChange={e => setFilters({...filters, tipo_andamento_id: e.target.value})} className="p-2 border rounded-md bg-white">
+               <select value={filters.tipo_andamento_id} onChange={e => setFilters({...filters, tipo_andamento_id: e.target.value})} className="p-2 border rounded-md bg-white text-gray-800">
                   <option value="">Todos os Status</option>
                   {tiposAndamento.map(ta => <option key={ta.id} value={ta.id}>{ta.nome}</option>)}
                </select>
@@ -333,17 +386,18 @@ export default function SolicitacoesPage() {
                 <p className="text-sm text-gray-600 mb-2">Exibindo {filteredSolicitacoes.length} de {solicitacoes.length} solicitações. Segure 'Ctrl' para selecionar várias.</p>
                 {viewMode === 'cards' ? (
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredSolicitacoes.map(s => <SolicitacaoCard key={s.id} solicitacao={s} tiposDemanda={tiposDemanda} tiposAndamento={tiposAndamento} onSelect={handleSelectSolicitacao} isSelected={selectedSolicitacoes.includes(s.id!)} />)}
+                        {filteredSolicitacoes.map(s => <SolicitacaoCard key={s.id} solicitacao={s} tiposDemanda={tiposDemanda} tiposAndamento={tiposAndamento} onSelect={handleSelectSolicitacao} isSelected={selectedSolicitacoes.includes(s.id!)} onEdit={handleEdit} onDelete={handleDelete} />)}
                      </div>
                 ) : (
                     <div className="bg-white/80 rounded-lg shadow-md overflow-x-auto">
                         <table className="w-full text-left">
                            <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="p-3">Endereço</th>
-                                    <th className="p-3">Demanda</th>
-                                    <th className="p-3">Status</th>
-                                    <th className="p-3">Data</th>
+                                    <th className="p-3 text-gray-800">Endereço</th>
+                                    <th className="p-3 text-gray-800">Demanda</th>
+                                    <th className="p-3 text-gray-800">Status</th>
+                                    <th className="p-3 text-gray-800">Data</th>
+                                    <th className="p-3 text-gray-800">Ações</th>
                                 </tr>
                            </thead>
                            <tbody>
@@ -351,14 +405,20 @@ export default function SolicitacoesPage() {
                                     const andamento = tiposAndamento.find(a => a.id === s.tipo_andamento_id);
                                     return (
                                     <tr key={s.id} onClick={(e) => handleSelectSolicitacao(s.id!, e.ctrlKey)} className={`border-t cursor-pointer ${selectedSolicitacoes.includes(s.id!) ? 'bg-blue-100' : 'hover:bg-gray-50'}`}>
-                                        <td className="p-3">{`${s.logradouro}, ${s.numero}`}</td>
-                                        <td className="p-3">{tiposDemanda.find(d => d.id === s.tipo_demanda_id)?.nome}</td>
-                                        <td className="p-3">
+                                        <td className="p-3 text-gray-800">{`${s.logradouro}, ${s.numero}`}</td>
+                                        <td className="p-3 text-gray-800">{tiposDemanda.find(d => d.id === s.tipo_demanda_id)?.nome}</td>
+                                        <td className="p-3 text-gray-800">
                                             <span className="text-xs font-bold text-white px-3 py-1 rounded-full shadow-sm" style={{ backgroundColor: andamento?.cor || '#6B7280' }}>
                                                 {andamento?.nome || 'N/A'}
                                             </span>
                                         </td>
-                                        <td className="p-3 text-sm text-gray-600">{s.data_criacao ? new Date(s.data_criacao).toLocaleDateString() : '-'}</td>
+                                        <td className="p-3 text-sm text-gray-800">{s.data_criacao ? new Date(s.data_criacao).toLocaleDateString() : '-'}</td>
+                                        <td className="p-3 text-gray-800">
+                                            <div className="flex gap-2">
+                                                <button onClick={(e) => { e.stopPropagation(); handleEdit(s); }} className="text-blue-500 hover:text-blue-700 p-2"><EditIcon className="w-5 h-5"/></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(s.id!); }} className="text-red-500 hover:text-red-700 p-2"><DeleteIcon className="w-5 h-5"/></button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 )})}
                            </tbody>

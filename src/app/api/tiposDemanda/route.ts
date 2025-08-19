@@ -13,7 +13,8 @@ export async function GET() {
     return NextResponse.json(items);
   } catch (error) {
     console.error("Erro ao buscar tipos de demanda:", error);
-    return NextResponse.json({ error: 'Falha ao buscar tipos de demanda.' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+    return NextResponse.json({ error: `Falha ao buscar tipos de demanda: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -39,7 +40,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: docRef.id, ...newItem }, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar tipo de demanda:", error);
-    return NextResponse.json({ error: 'Falha ao criar tipo de demanda.' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+    return NextResponse.json({ error: `Falha ao criar tipo de demanda: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -61,7 +63,8 @@ export async function PUT(req: Request) {
         return NextResponse.json({ id, nome, descricao });
     } catch (error) {
         console.error("Erro ao atualizar tipo de demanda:", error);
-        return NextResponse.json({ error: 'Falha ao atualizar tipo de demanda.' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+        return NextResponse.json({ error: `Falha ao atualizar tipo de demanda: ${errorMessage}` }, { status: 500 });
     }
 }
 
@@ -76,6 +79,7 @@ export async function DELETE(req: Request) {
         return new Response(null, { status: 204 });
     } catch (error) {
         console.error("Erro ao apagar tipo de demanda:", error);
-        return NextResponse.json({ error: 'Falha ao apagar tipo de demanda.' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+        return NextResponse.json({ error: `Falha ao apagar tipo de demanda: ${errorMessage}` }, { status: 500 });
     }
 }

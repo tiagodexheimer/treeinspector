@@ -9,8 +9,8 @@ export async function GET() {
     const snapshot = await db.collection('solicitacoes').get();
     const solicitacoes = snapshot.docs.map(doc => {
       const data = doc.data();
-      // Garante que a data de criação seja convertida para um formato serializável
-      const dataCriacao = data.data_criacao ? (data.data_criacao as admin.firestore.Timestamp).toDate().toISOString() : new Date().toISOString();
+      // FIX: Treat data_criacao as a string, which is how it's stored.
+      const dataCriacao = data.data_criacao || new Date().toISOString();
       return {
         id: doc.id,
         ...data,
@@ -22,7 +22,8 @@ export async function GET() {
     return NextResponse.json(solicitacoes);
   } catch (error) {
     console.error("Erro ao buscar solicitações:", error);
-    return NextResponse.json({ error: 'Falha ao buscar solicitações.' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+    return NextResponse.json({ error: `Falha ao buscar solicitações: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -45,7 +46,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: doc.id, ...doc.data() }, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar solicitação:", error);
-    return NextResponse.json({ error: 'Falha ao criar solicitação.' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+    return NextResponse.json({ error: `Falha ao criar solicitação: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -62,7 +64,8 @@ export async function PUT(req: Request) {
 
     } catch (error) {
         console.error("Erro ao atualizar solicitação:", error);
-        return NextResponse.json({ error: 'Falha ao atualizar solicitação.' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+        return NextResponse.json({ error: `Falha ao atualizar solicitação: ${errorMessage}` }, { status: 500 });
     }
 }
 
@@ -77,6 +80,7 @@ export async function DELETE(req: Request) {
         return new Response(null, { status: 204 });
     } catch (error) {
         console.error("Erro ao apagar solicitação:", error);
-        return NextResponse.json({ error: 'Falha ao apagar solicitação.' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+        return NextResponse.json({ error: `Falha ao apagar solicitação: ${errorMessage}` }, { status: 500 });
     }
 }
