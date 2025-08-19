@@ -11,6 +11,7 @@ export interface TipoDemanda {
 export interface TipoAndamento {
   id?: string;
   nome: string;
+  cor: string; // Adiciona o campo de cor
   descricao?: string;
 }
 
