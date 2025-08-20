@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '../../lib/firebase';
 import { signOut, onAuthStateChanged, User } from 'firebase/auth';
-import AdministracaoPage from './AdministracaoPage'; // Importe a nova página
+import AdministracaoPage from './AdministracaoPage';
 import SolicitacoesPage from './SolicitacoesPage';
-import RotasPage from './RotasPage'; // <-- IMPORTAR A NOVA PÁGINA
+import RotasPage from './RotasPage';
+import DashboardHomePage from './DashboardHomePage'; // <-- IMPORTAR O NOVO COMPONENTE
 
 // --- Ícones ---
 const LogoIconDashboard = ({ className }: { className: string }) => (
@@ -16,15 +17,6 @@ const LogoutIcon = ({ className }: { className: string }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
 );
 
-// --- Conteúdo Padrão do Dashboard ---
-const DashboardContent = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white/80 rounded-lg shadow-md p-6 h-64 hover:shadow-xl transition-shadow"><h3 className="font-semibold text-gray-700">Métrica 1</h3></div>
-        <div className="bg-white/80 rounded-lg shadow-md p-6 h-64 hover:shadow-xl transition-shadow"><h3 className="font-semibold text-gray-700">Métrica 2</h3></div>
-        <div className="bg-white/80 rounded-lg shadow-md p-6 h-64 hover:shadow-xl transition-shadow"><h3 className="font-semibold text-gray-700">Métrica 3</h3></div>
-        <div className="bg-white/80 rounded-lg shadow-md p-6 h-64 hover:shadow-xl transition-shadow"><h3 className="font-semibold text-gray-700">Métrica 4</h3></div>
-    </div>
-);
 
 // --- Layout Principal ---
 const DashboardLayout = ({ user, onSignOut }: { user: User, onSignOut: () => void }) => {
@@ -57,11 +49,11 @@ const DashboardLayout = ({ user, onSignOut }: { user: User, onSignOut: () => voi
         return <AdministracaoPage />;
       case 'Solicitações': 
         return <SolicitacoesPage />;
-      case 'Gerenciar Rotas': // <-- ADICIONAR NOVO CASE
+      case 'Gerenciar Rotas':
         return <RotasPage />;
       case 'Dashboard':
-        return <DashboardContent />;
-      // Adicione outros casos para outras páginas aqui
+        // *** CORREÇÃO APLICADA AQUI ***
+        return <DashboardHomePage setActivePage={setActivePage} />; 
       default:
         return <div className="bg-white/80 p-6 rounded-lg shadow-md">Conteúdo para <strong>{activePage}</strong> em desenvolvimento.</div>;
     }
@@ -85,7 +77,7 @@ const DashboardLayout = ({ user, onSignOut }: { user: User, onSignOut: () => voi
                   <a 
                     key={item} 
                     href="#" 
-                    onClick={(e) => { setActivePage(item); createRipple(e); }}
+                    onClick={(e) => { e.preventDefault(); setActivePage(item); createRipple(e); }}
                     className={`relative overflow-hidden px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                         activePage === item ? 'border border-white' : 'hover:bg-[#6fa139]/50'
                     }`}
