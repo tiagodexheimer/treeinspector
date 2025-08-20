@@ -59,7 +59,11 @@ export default function RotasPage() {
     const getAddressFromCep = async (cep: string, type: 'start' | 'end') => {
         const cepOnlyNumbers = cep.replace(/\D/g, '');
         if (cepOnlyNumbers.length !== 8) {
-            type === 'start' ? setStartAddressInfo('') : setEndAddressInfo('');
+            if (type === 'start') {
+                setStartAddressInfo('');
+            } else {
+                setEndAddressInfo('');
+            }
             return;
         }
         try {
@@ -67,13 +71,25 @@ export default function RotasPage() {
             const data = await response.json();
             if (!data.erro) {
                 const address = `${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}`;
-                type === 'start' ? setStartAddressInfo(address) : setEndAddressInfo(address);
+                if (type === 'start') {
+                    setStartAddressInfo(address);
+                } else {
+                    setEndAddressInfo(address);
+                }
             } else {
-                type === 'start' ? setStartAddressInfo('CEP não encontrado.') : setEndAddressInfo('CEP não encontrado.');
+                if (type === 'start') {
+                    setStartAddressInfo('CEP não encontrado.');
+                } else {
+                    setEndAddressInfo('CEP não encontrado.');
+                }
             }
         } catch (error) {
             console.error("Erro ao buscar CEP:", error);
-            type === 'start' ? setStartAddressInfo('Erro ao buscar CEP.') : setEndAddressInfo('Erro ao buscar CEP.');
+            if (type === 'start') {
+                setStartAddressInfo('Erro ao buscar CEP.');
+            } else {
+                setEndAddressInfo('Erro ao buscar CEP.');
+            }
         }
     };
 
@@ -88,7 +104,9 @@ export default function RotasPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedRota)
             }).then(res => {
-                if (res.ok) fetchData();
+                if (res.ok) {
+                    fetchData();
+                }
             });
         }
     };
@@ -110,7 +128,9 @@ export default function RotasPage() {
     };
     
     const generateEmbedUrl = (origin: string, destination: string, waypoints: string[]) => {
-        if (!apiKey) return null;
+        if (!apiKey) {
+            return null;
+        }
         const base = "https://www.google.com/maps/embed/v1/directions";
         const waypointsString = waypoints.join('|');
         return `${base}?key=${apiKey}&origin=${origin}&destination=${destination}&waypoints=${waypointsString}`;

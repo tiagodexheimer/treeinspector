@@ -1,0 +1,16 @@
+[debug] [2025-08-20T19:07:28.115Z] ----------------------------------------------------------------------
+[debug] [2025-08-20T19:07:28.117Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\fenix\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-08-20T19:07:28.118Z] CLI Version:   14.12.1
+[debug] [2025-08-20T19:07:28.118Z] Platform:      win32
+[debug] [2025-08-20T19:07:28.118Z] Node Version:  v22.17.0
+[debug] [2025-08-20T19:07:28.118Z] Time:          Wed Aug 20 2025 16:07:28 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2025-08-20T19:07:28.118Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-20T19:07:28.304Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-20T19:07:28.304Z] > authorizing via signed-in user (fenixpalwashan@gmail.com)
+[debug] [2025-08-20T19:07:28.305Z] [iam] checking project treeinspector-9c98a for permissions ["firebase.projects.get",null]
+[debug] [2025-08-20T19:07:28.306Z] Checked if tokens are valid: true, expires at: 1755719661133
+[debug] [2025-08-20T19:07:28.306Z] Checked if tokens are valid: true, expires at: 1755719661133
+[debug] [2025-08-20T19:07:28.307Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/treeinspector-9c98a:testIamPermissions [none]
+[debug] [2025-08-20T19:07:28.307Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/treeinspector-9c98a:testIamPermissions x-goog-quota-user=projects/treeinspector-9c98a
+[debug] [2025-08-20T19:07:28.307Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/treeinspector-9c98a:testIamPermissions {"permissions":["firebase.projects.get",null]}

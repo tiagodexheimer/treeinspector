@@ -21,3 +21,27 @@ runConfig:
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   # - variable: MY_SECRET
   #   secret: mySecretRef
+# Environment variables and secrets.
+env:
+  # Grant access to secrets in Cloud Secret Manager.
+  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+  - variable: FIREBASE_PROJECT_ID
+    secret: treeinspector-9c98a
+  - variable: FIREBASE_CLIENT_EMAIL
+    secret: firebase-adminsdk-fbsvc@treeinspector-9c98a.iam.gserviceaccount.com
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: -----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCzeDZ1QXYIOfCH\nKcOtlK25Z8aJTGbz0Li1vpXTG40PRVt+DdNKJnnLRJwrFNOAPiZIXc2zLt0Feq8o\npH38Sm4vWJuKCSNpCbcx2D24kXJVdAMdKM/nvTAlT7YRwcTxYDTtrPMkU/OEpJ7C\n/NLdjoA+GJEJabfYHst850XLjQnhms+Lin6KyaxwFAodgIoPO4HtS0b2sxcd001T\nwzuuGxOKwQ5SuAR/nfBQcRHG8qe8BvmaNYqSxZmaZUSCMlgbHV9gywkC158u3wLE\nqZ/7C7q4ifmUJPLQ2RdZRZcY0oY3w3YH1aVUvhe5UYFMik9vL6ft7t705FcaQ0Rr\nYPvR4IZ1AgMBAAECggEAOjSnvNmxNTPNXZje/MH2oeYVTtw3m6W68j7QiropwqUk\n6joDp83YvGMRHyvO+I2vjtLVbuKpDije/Bh1P8jH+ZUMRPV3xY5AGuteASky4qIQ\njHl7DFagcclrbFDi1cH1CIyKAuMzXHajguvKW87mqrz+9QWTeYVrS6QaT8z7Qm6O\nxaMsskm9zaSzrJcyc+8N9/rJKm6COu02j6jbobEK926TiBETwLR98rE4ipl/5xyv\nm65I0vPrcSQG7N6Wvv+kJfOOEF29uyic3Gn9yND/4rHdotOVdU/AO/S95/ztCdjz\nCYbSX3/stY+4cR9oKyhQWThQO8a7HAk/JBbOQz0ZlQKBgQDkegtBkK2eGr4wSWxr\nJPJQTP9sPS8/zNL3xYZnbx7CGTkRuf/y8OIT1rhU1iaclW1dAUU3QbHQl0wB/hNt\nZE4tZyh4+FPFZ2KnUmthvrihWX6VSLodKUr+HLpuqdzT9SyML31sRRZNLd24ZHh2\nHNlQrQkp/HrTtYCsi/1U9ZcyRwKBgQDJFthlxvoBgGlVqeOkaWsr+hzwvSgCCDNf\nKx7iNfG/V2Br/3YCGGujikreKSbHWLJqBPDNF89hnJi/RXwPOaEKO+4Ua4uwuMBl\nEbwK6uJYO9ecEzp2KDiT+H53CYylcqJSGzEXqJ0OqThuSaRNnSZyaCQ2AtfHjf7J\nxI4s/ATDYwKBgQCGEsAsN3RKhTL6Lvv6W/H+AVEZ+UWS0OU0FKtsYx7Pk/GTX2y8\n6XIhZi1BS3HZDS7iFu7BIEHyP/aQbMKFvQjLR+/OHRs7ihGwUoNFFqBNvrCzdbwR\nhLvHJqCYdAFsOEFt+ihFsr0FiVbE7+Bon0E/QGtSQiDpv2bE2llM09ln3QKBgGNX\nHeBpw+gp/9+J5iO60G8RSGrFh5Y5ZueE7eTisWLNT50KvsmaNtK75vCJc9bXQoyN\nlEg9kv2t1ufm87qxxZTAtoTv/Dp5itJjSHo8P0VHiuRXu3HTvN+cyx0TYp/5Wacm\nN8JwUeaEQpR5XOna0LuEJx9nmCHFTDFxIKuodNHxAoGARRFHdIw9z/E9vuGW0pAP\n3xcbKqrYaAt5cH3Eo5HKvNMIdwSHvxvzvjt334A/8NPeSNYQUwrx1UMb7+WmVlnJ\nMl9yiijk/9lpFwBFyhfJU36lienLlixuy8KDBoQS0o78JKsovX/Zwewdeg2m1yCR\nOarkjnbIMqyOVipjhdBV3i4=\n-----END PRIVATE KEY-----\n
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: AIzaSyDloViKd7R4yvZm8wpMK9c7r3919dgsnvw
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    secret: treeinspector-9c98a.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    secret: treeinspector-9c98a
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    secret: treeinspector-9c98a.firebasestorage.app
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    secret: 587723148153
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    secret: 1:587723148153:web:9e2811e65aad3d2ee6fda8
+  - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    secret: AIzaSyDloViKd7R4yvZm8wpMK9c7r3919dgsnvw
