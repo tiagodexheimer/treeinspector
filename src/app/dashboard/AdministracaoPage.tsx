@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react'; // Adicionado useCallback
 import { TipoDemanda, TipoAndamento } from '../../types';
 
 // --- Ícones (sem alterações) ---
@@ -48,7 +48,7 @@ const ColorPicker = ({ onSelectColor, onClose }: { onSelectColor: (color: string
   );
 };
 
-// --- Componente de Gerenciamento para Tipos de Andamento (sem alterações) ---
+// --- Componente de Gerenciamento para Tipos de Andamento ---
 function AndamentoManager() {
   const [items, setItems] = useState<TipoAndamento[]>([]);
   const [editingItem, setEditingItem] = useState<TipoAndamento | null>(null);
@@ -57,7 +57,8 @@ function AndamentoManager() {
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const apiPath = 'tiposAndamento';
 
-  const fetchItems = async () => {
+  // *** CORREÇÃO APLICADA AQUI ***
+  const fetchItems = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/${apiPath}`);
@@ -70,9 +71,10 @@ function AndamentoManager() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiPath]);
 
-  useEffect(() => { fetchItems(); }, []);
+  // *** CORREÇÃO APLICADA AQUI ***
+  useEffect(() => { fetchItems(); }, [fetchItems]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +135,7 @@ function AndamentoManager() {
       <div className="space-y-2">
         {isLoading ? <p className="text-gray-600">Carregando...</p> : items.map((item) => (
           <div key={item.id} className="border border-gray-200 p-3 rounded-md">
-            {editingItem?.id === item.id ? (
+            {editingItem?.id === item.id && editingItem ? (
               <div className='space-y-3'>
                  <div className='flex flex-col sm:flex-row items-center gap-4'>
                   <input type="text" value={editingItem.nome} onChange={(e) => setEditingItem({ ...editingItem, nome: e.target.value })} className="border border-gray-300 p-2 rounded-md w-full sm:flex-grow text-gray-800"/>
@@ -174,14 +176,15 @@ function AndamentoManager() {
   );
 }
 
-// --- Componente Genérico para Tipos de Demanda (sem alterações) ---
+// --- Componente Genérico para Tipos de Demanda ---
 function TiposManager<T extends { id?: string; nome: string; descricao?: string }>({ title, apiPath }: {title: string, apiPath: string}) {
   const [items, setItems] = useState<T[]>([]);
   const [editingItem, setEditingItem] = useState<T | null>(null);
   const [newItem, setNewItem] = useState({ nome: '', descricao: '' });
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchItems = async () => {
+  // *** CORREÇÃO APLICADA AQUI ***
+  const fetchItems = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/${apiPath}`);
@@ -194,9 +197,10 @@ function TiposManager<T extends { id?: string; nome: string; descricao?: string 
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiPath, title]);
 
-  useEffect(() => { fetchItems(); }, [apiPath]);
+  // *** CORREÇÃO APLICADA AQUI ***
+  useEffect(() => { fetchItems(); }, [fetchItems]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -247,7 +251,7 @@ function TiposManager<T extends { id?: string; nome: string; descricao?: string 
       <div className="space-y-2">
         {isLoading ? <p className="text-gray-600">Carregando...</p> : items.map((item) => (
           <div key={item.id} className="border border-gray-200 p-3 rounded-md flex justify-between items-center">
-            {editingItem?.id === item.id ? (
+            {editingItem?.id === item.id && editingItem ? (
               <div className='flex-grow flex flex-col sm:flex-row items-center gap-4'>
                  <input type="text" value={editingItem.nome} onChange={(e) => setEditingItem({ ...editingItem, nome: e.target.value })} className="border border-gray-300 p-2 rounded-md w-full sm:flex-grow text-gray-800"/>
                   <input type="text" value={editingItem.descricao || ''} onChange={(e) => setEditingItem({ ...editingItem, descricao: e.target.value })} className="border border-gray-300 p-2 rounded-md w-full sm:flex-grow text-gray-800"/>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Importe de 'next/navigation'
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 
 // --- Ícones SVG ---
 const GoogleIcon = ({ className }: { className: string }) => (

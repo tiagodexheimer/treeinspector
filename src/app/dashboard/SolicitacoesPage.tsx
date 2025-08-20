@@ -240,7 +240,7 @@ export default function SolicitacoesPage() {
                 setSolicitacoes(await solicitacoesRes.json());
             } else {
                 console.error("Falha ao buscar solicitações:", await solicitacoesRes.json());
-                setSolicitacoes([]); // Garante que o estado seja um array em caso de erro
+                setSolicitacoes([]);
             }
 
             if (demandasRes.ok) {
@@ -271,7 +271,7 @@ export default function SolicitacoesPage() {
     // Lógica de filtragem
     const filteredSolicitacoes = useMemo(() => {
         if (!Array.isArray(solicitacoes)) {
-            return []; // Retorna um array vazio se o estado não for um array
+            return [];
         }
         return solicitacoes.filter(s => 
             (filters.rua ? s.logradouro.toLowerCase().includes(filters.rua.toLowerCase()) : true) &&
@@ -383,7 +383,8 @@ export default function SolicitacoesPage() {
             
             {/* Conteúdo */}
             <div>
-                <p className="text-sm text-gray-600 mb-2">Exibindo {filteredSolicitacoes.length} de {solicitacoes.length} solicitações. Segure 'Ctrl' para selecionar várias.</p>
+                {/* *** CORREÇÃO APLICADA AQUI *** */}
+                <p className="text-sm text-gray-600 mb-2">Exibindo {filteredSolicitacoes.length} de {solicitacoes.length} solicitações. Segure &apos;Ctrl&apos; para selecionar várias.</p>
                 {viewMode === 'cards' ? (
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredSolicitacoes.map(s => <SolicitacaoCard key={s.id} solicitacao={s} tiposDemanda={tiposDemanda} tiposAndamento={tiposAndamento} onSelect={handleSelectSolicitacao} isSelected={selectedSolicitacoes.includes(s.id!)} onEdit={handleEdit} onDelete={handleDelete} />)}

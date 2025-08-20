@@ -1,6 +1,6 @@
 // Arquivo: types/index.ts
 // É uma boa prática definir tipos e interfaces em um arquivo separado.
-import { firestore } from 'firebase-admin';
+
 
 export interface TipoDemanda {
   id?: string;

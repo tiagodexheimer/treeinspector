@@ -10,6 +10,11 @@ const MapIcon = ({ className }: { className: string }) => <svg className={classN
 const OptimizeIcon = ({ className }: { className: string }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
 
 
+// Definindo um tipo para a rota populada com objetos de solicitação
+type RotaPopulada = Omit<Rota, 'solicitacoes'> & {
+    solicitacoes: Solicitacao[];
+}
+
 export default function RotasPage() {
     const [rotas, setRotas] = useState<Rota[]>([]);
     const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
@@ -35,19 +40,23 @@ export default function RotasPage() {
     useEffect(() => {
         fetchData();
     }, []);
-
-    const handleEdit = (rota: Rota) => {
+    
+    // *** CORREÇÃO APLICADA AQUI ***
+    const handleEdit = (rota: RotaPopulada) => {
         const newName = prompt("Editar nome da rota:", rota.nome_rota);
         if (newName && newName.trim() !== "") {
-            // Extrai apenas os IDs para enviar na requisição PUT
-            const solicitacoesIds = rota.solicitacoes.map((s: any) => s.id);
+            const solicitacoesIds = rota.solicitacoes.map(s => s.id!);
             const updatedRota = { ...rota, nome_rota: newName.trim(), solicitacoes: solicitacoesIds };
             
             fetch('/api/rotas', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedRota)
-            }).then(res => res.ok && fetchData());
+            }).then(res => {
+                if (res.ok) {
+                    fetchData();
+                }
+            });
         }
     };
 
@@ -97,7 +106,7 @@ export default function RotasPage() {
         return `https://www.google.com/maps/dir/?api=1&origin=$${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&waypoints=${waypoints}`;
     };
 
-    const solicitacoesPorRota = useMemo(() => {
+    const solicitacoesPorRota: RotaPopulada[] = useMemo(() => {
         return rotas.map(rota => ({
             ...rota,
             solicitacoes: rota.solicitacoes.map(id => solicitacoes.find(s => s.id === id)).filter(Boolean) as Solicitacao[]
@@ -108,7 +117,6 @@ export default function RotasPage() {
 
     return (
         <div className="space-y-6">
-            {/* Título da página foi REMOVIDO daqui */}
             {solicitacoesPorRota.map(rota => (
                 <div key={rota.id} className="bg-white/80 rounded-lg shadow-md p-6">
                     <div className="flex justify-between items-center mb-4">
@@ -128,16 +136,13 @@ export default function RotasPage() {
                                 <MapIcon className="w-5 h-5 mr-2" />
                                 Ver no Mapa
                             </a>
-                            <button onClick={() => handleEdit(rota as any)} className="p-2 text-gray-600 hover:text-blue-600"><EditIcon className="w-5 h-5" /></button>
+                            <button onClick={() => handleEdit(rota)} className="p-2 text-gray-600 hover:text-blue-600"><EditIcon className="w-5 h-5" /></button>
                             <button onClick={() => handleDelete(rota.id!)} className="p-2 text-gray-600 hover:text-red-600"><DeleteIcon className="w-5 h-5" /></button>
                         </div>
                     </div>
                     <div className="border-t border-gray-200 pt-4">
                         <h4 className="font-semibold mb-2 text-gray-700">Pontos de Parada ({rota.solicitacoes.length}):</h4>
                         {rota.solicitacoes.length > 0 ? (
-                            // *** CORREÇÃO APLICADA AQUI ***
-                            // Trocado <ol> por <ul> para remover a numeração automática
-                            // A numeração agora é controlada apenas pelo `index + 1`
                             <ul className="list-none space-y-2"> 
                                 {rota.solicitacoes.map((s, index) => (
                                     <li key={s.id} className="text-gray-600">

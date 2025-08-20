@@ -1,7 +1,9 @@
+// src/app/api/solicitacoes/route.ts
+
 import { NextResponse } from 'next/server';
 import db from '@/lib/firebaseAdmin';
 import { Solicitacao } from '@/types';
-import admin from 'firebase-admin';
+// A linha 'import admin from 'firebase-admin';' foi removida daqui.
 
 // GET: Buscar todas as solicitações
 export async function GET() {
@@ -9,7 +11,6 @@ export async function GET() {
     const snapshot = await db.collection('solicitacoes').get();
     const solicitacoes = snapshot.docs.map(doc => {
       const data = doc.data();
-      // FIX: Treat data_criacao as a string, which is how it's stored.
       const dataCriacao = data.data_criacao || new Date().toISOString();
       return {
         id: doc.id,
